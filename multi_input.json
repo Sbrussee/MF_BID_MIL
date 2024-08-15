@@ -1,0 +1,17 @@
+{
+   "normalization":[
+      "macenko"
+   ],
+   "normalization_presets":[
+      "v3"
+   ],
+   "feature_extractor":[
+      "CTransPath"
+   ],
+   "mil_model":[
+      "CLAM_SB"
+   ],
+   "ssl_model":[
+      "None"
+   ]
+}

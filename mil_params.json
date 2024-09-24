@@ -1,0 +1,62 @@
+{
+ "trainer": "fastai",
+ "params": {
+  "aggregation_level": "slide",
+  "lr": null,
+  "wd": 1e-05,
+  "bag_size": 512,
+  "fit_one_cycle": true,
+  "epochs": 32,
+  "batch_size": 32,
+  "model": "clam_sb",
+  "model_size": "small",
+  "bag_loss": "ce",
+  "bag_weight": 0.7,
+  "dropout": false,
+  "opt": "adam",
+  "inst_loss": "ce",
+  "no_inst_cluster": false,
+  "B": 8,
+  "model_kwargs": null
+ },
+ "outcomes": "category",
+ "outcome_labels": {
+  "0": "BID",
+  "1": "MF"
+ },
+ "bags": "./mf_clam/bags/uni_macenko_20x_256",
+ "input_shape": 1024,
+ "output_shape": 2,
+ "bags_extractor": {
+  "extractor": {
+   "class": "uni",
+   "kwargs": {}
+  },
+  "normalizer": {
+   "method": "macenko",
+   "fit": {
+    "stain_matrix_target": [
+     [
+      0.5062568187713623,
+      0.22186939418315887
+     ],
+     [
+      0.7532230615615845,
+      0.8652154803276062
+     ],
+     [
+      0.4069173336029053,
+      0.42241501808166504
+     ]
+    ],
+    "target_concentrations": [
+     1.7656903266906738,
+     1.2797492742538452
+    ]
+   }
+  },
+  "num_features": 1024,
+  "tile_px": 256,
+  "tile_um": "20x"
+ }
+}

@@ -7,6 +7,138 @@ In order to run the script, one can use pip to install the requirements:
 pip install -r requirements.txt
 ```
 
+## Using the model weights:
+
+This guide will help you load the CLAM model using the `.pth` weights and `mil_params.json` configuration file, with the additional functionality of `CLAMModelConfig` from `slideflow-gpl`.
+
+## Requirements
+
+Make sure you have the following installed:
+
+- Python 3.7+
+- [SlideFlow](https://github.com/ncoudray/slideflow) installed via `pip install slideflow`
+- [SlideFlow-GPL](https://github.com/ncoudray/slideflow-gpl) installed via `pip install slideflow-gpl`
+- A valid Whole Slide Image (WSI) or dataset with extracted tile features
+
+## Files Provided
+
+- `model_weights.pth`: The pre-trained weights of the CLAM model
+- `mil_params.json`: The configuration file for building the model
+
+Ensure these two files are located in the same directory when performing inference or evaluation. Users can simply load the weights onto a CLAM model with the right configuration, or use slideflow's prediction and evaluation capabilities to use the model for their own slides. You can load the CLAM model configuration from mil_params.json using the CLAMModelConfig class from slideflow-gpl.
+```python
+import slideflow as sf
+from slideflow.clam import CLAMModelConfig
+
+# Define the paths
+model_path = '/path_to_model_directory'  # Directory containing model_weights.pth and mil_params.json
+config_path = '/path_to_model_directory/mil_params.json'
+
+# Step 1: Load the JSON configuration
+with open(config_path, 'r') as f:
+    config_data = json.load(f)
+
+# Instantiate CLAMModelConfig using the loaded JSON parameters
+clam_config = CLAMModelConfig(
+    model=config_data.get("model", "clam_sb"),
+    model_size=config_data["params"].get("model_size", "small"),
+    bag_loss=config_data["params"].get("bag_loss", "ce"),
+    bag_weight=config_data["params"].get("bag_weight", 0.7),
+    dropout=config_data["params"].get("dropout", False),
+    opt=config_data["params"].get("opt", "adam"),
+    inst_loss=config_data["params"].get("inst_loss", "ce"),
+    no_inst_cluster=config_data["params"].get("no_inst_cluster", False),
+    B=config_data["params"].get("B", 8)
+)
+
+# Build the model
+n_in = 1024    # Number of input features (feature size) UNI: 1024
+n_out = 2      # Number of output classes (e.g., binary classification)
+
+# This builds the CLAM model with the specified input and output dimensions
+clam_model = config.build_model(n_in=n_in, n_out=n_out)
+
+# Load the pre-trained weights (assuming the weights file is in the same directory)
+weights_path = f'{model_path}/best_mf_clam_weights.pth'
+
+# Optionally, provide a feature extractor and normalizer, or let SlideFlow auto-detect them
+extractor = None
+normalizer = None
+
+# Generate predictions for a slide
+slide_path = '/path_to_slide'
+predictions, attention_scores = sf.mil.predict_slide(
+    model=model_path,
+    slide=slide_path,
+    extractor=extractor,
+    normalizer=normalizer,
+    attention=True  # Set to True if you want attention scores
+)
+
+# Print predictions and attention scores
+print("Predictions:", predictions)
+print("Attention Scores:", attention_scores)
+```
+Parameters for CLAMModelConfig:
+- model: Specify the model architecture. Options: 'clam_sb', 'clam_mb', 'mil_fc', 'mil_fc_mc'.
+- model_size: Available sizes include small, big, multiscale, xception, etc.
+- bag_loss: The bag loss function, either 'ce' (Cross-Entropy) or 'svm' (SmoothTop1SVM).
+- bag_weight: Weight for the bag loss, usually between 0 and 1.
+- dropout: Whether to apply dropout (True or False).
+- opt: The optimizer, either 'adam' or 'sgd'.
+- inst_loss: Instance loss function, either 'ce' or 'svm'.
+- no_inst_cluster: Disable instance-level clustering (True or False).
+- B: Number of positive/negative patches to sample for instance-level training.
+- validate: Whether to validate the hyperparameter configuration.
+The configuration file mil_params.json will automatically load these settings, and you can customize them as needed.
+
+3. Evaluating the CLAM Model
+To evaluate the CLAM model on a dataset, use the eval_mil function, similar to how you would evaluate any MIL model in SlideFlow.
+
+```python
+import slideflow as sf
+from slideflow.clam import CLAMModelConfig
+
+# Define the paths and dataset
+model_path = '/path_to_model_directory/'
+weights_path = '/path_to_model_directory/model_weights.pth'
+config_path = '/path_to_model_directory/mil_params.json'
+dataset = sf.Dataset('/path_to_dataset')  # Path to your dataset
+outcomes = "category"  # The label(s) or category of outcomes
+bags = '/path_to_bags_directory'  # Directory containing bag files
+
+# Evaluate the model
+results = sf.mil.eval_mil(
+    weights=model_path,
+    dataset=dataset,
+    outcomes=outcomes,
+    bags=bags,
+    attention_heatmaps=True  # Set to True if you want attention heatmaps
+)
+```
+Results will be saved to the default 'mil' directory, or specify with 'outdir'
+### Directory Structure
+Make sure the .pth weights file and mil_params.json configuration file are located in the same directory as shown below:
+```
+bash
+/path_to_model_directory/
+├── model_weights.pth
+├── mil_params.json
+```
+4. Additional Features
+You can customize the following options when calling predict_slide or eval_mil:
+
+- Feature Extractor: Specify a custom feature extractor if needed.
+- Stain Normalizer: Provide a custom stain normalizer for different stain normalization techniques.
+- Attention Pooling: Control attention pooling strategies for attention scores (average or max).
+- Attention Heatmaps: Generate attention heatmaps for slides by enabling the attention_heatmaps flag.
+
+For more information, check the SlideFlow documentation and the SlideFlow-GPL documentation.
+
+## Troubleshooting
+- Ensure that mil_params.json and .pth weights are in the same directory.
+- Ensure your dataset and bags are structured correctly.
+- If any errors occur, check the console logs for additional details and adjust paths accordingly.
 
 ## Inference
 To run the code, one can either specify CLI arguments to mf_script.py or use the multi_input.json file to specify the parameters. When using the CLI, one can run the script as follows:

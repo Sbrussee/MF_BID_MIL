@@ -1,6 +1,19 @@
 ## MF-CLAM
 This is the repository for the CLAM model applied to the task of differentating between Mycosis Fungoides (MF) and Benign Inflammatory Dermatoses (BIDs). The implementation heavily relies on the SlideFlow Python Package (ver 2.3.0).
 Pleas note that this model **is not intended to be used for clinical practice**, instead it should be used for **research purposes only**.
+
+## Publication
+This repository contains the software behind this [publication](https://www.sciencedirect.com/science/article/pii/S0022202X24021018) in the Journal of Investigative Dermatology. When using the code or weights from this publication, please cite the following
+```
+@article{doeleman2024deep,
+  title={Deep learning-based classification of early-stage mycosis fungoides and benign inflammatory dermatoses on hematoxylin and eosin-stained whole-slide images: a retrospective, proof-of-concept study},
+  author={Doeleman, Thom and Brussee, Siemen and Hondelink, Liesbeth M and Westerbeek, Dani{\"e}lle WF and Sequeira, Ana M and Valkema, Pieter A and Jansen, Patty M and He, Junling and Vermeer, Maarten H and Quint, Koen D and others},
+  journal={Journal of Investigative Dermatology},
+  year={2024},
+  publisher={Elsevier}
+}
+```
+
 ## Installation
 In order to run the script, one can use pip to install the requirements:
 ```
@@ -16,8 +29,8 @@ This guide will help you load the CLAM model using the `.pth` weights and `mil_p
 Make sure you have the following installed:
 
 - Python 3.7+
-- [SlideFlow](https://github.com/ncoudray/slideflow) installed via `pip install slideflow`
-- [SlideFlow-GPL](https://github.com/ncoudray/slideflow-gpl) installed via `pip install slideflow-gpl`
+- [SlideFlow](slideflow.dev) installed via `pip install slideflow`
+- Optionally, for loading the CLAM model, we install slideflow-gpl via `pip install slideflow-gpl`
 - A valid Whole Slide Image (WSI) or dataset with extracted tile features
 
 ## Files Provided
@@ -133,7 +146,7 @@ You can customize the following options when calling predict_slide or eval_mil:
 - Attention Pooling: Control attention pooling strategies for attention scores (average or max).
 - Attention Heatmaps: Generate attention heatmaps for slides by enabling the attention_heatmaps flag.
 
-For more information, check the SlideFlow documentation and the SlideFlow-GPL documentation.
+For more information, check the [SlideFlow documentation](slideflow.dev) documentation.
 
 ## Troubleshooting
 - Ensure that mil_params.json and .pth weights are in the same directory.

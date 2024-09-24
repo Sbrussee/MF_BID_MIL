@@ -1,5 +1,5 @@
 ## MF-CLAM
-This is the repository for the CLAM model applied to the task of differentating early between Mycosis Fungoides (MF) and Benign Inflammatory Dermatoses (BIDs). The implementation heavily relies on the SlideFlow Python Package (ver 2.3.0).
+This is the repository for the CLAM model applied to the task of differentating between early-stage Mycosis Fungoides (MF) and Benign Inflammatory Dermatoses (BIDs). The implementation heavily relies on the SlideFlow Python Package (ver 2.3.0).
 Pleas note that this model **is not intended to be used for clinical practice**, instead it should be used for **research purposes only**.
 
 ## Publication

@@ -19,6 +19,7 @@
   "B": 8,
   "model_kwargs": null
  },
+ "weights" : "./best_mf_clam_weights.pth",
  "outcomes": "category",
  "outcome_labels": {
   "0": "BID",

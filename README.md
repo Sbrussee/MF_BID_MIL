@@ -1,4 +1,8 @@
+This repository contains the inference code for the publication "Deep Learning–Based Classification of Early-Stage Mycosis Fungoides and Benign Inflammatory Dermatoses on H&E-Stained Whole-Slide Images: A Retrospective, Proof-of-Concept Study", available at https://www.sciencedirect.com/science/article/pii/S0022202X24021018?via%3Dihub 
 
+The weights are part of the repository. Below is the code, as present in get_predictions.py, which can be used to perform inference using the trained weights. 
+
+The code in this repository is for RESEARCH PURPOSES ONLY, and should not be used in clinical practice.
 
 # Required imports
 ```

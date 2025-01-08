@@ -1,3 +1,7 @@
+
+
+# Required imports
+```
 import slideflow as sf
 from slideflow.mil import ModelConfigCLAM, mil_config
 from slideflow.model.extractors._factory_torch import TorchFeatureExtractor
@@ -8,19 +12,22 @@ import json
 import timm
 import os
 import torch
-# import transforms
 from torchvision import transforms
-
+```
 # Define the paths
+```
 model_path = './'  # Directory containing model_weights.pth and mil_params.json
 config_path = './mil_params.json'
+```
 
 
 # Step 1: Load the JSON configuration
+```
 with open(config_path, 'r') as f:
     config_data = json.load(f)
-
-# Instantiate CLAMModelConfig using the loaded JSON parameters
+```
+# Instantiate model config using the loaded JSON parameters
+```
 clam_config = mil_config(
     model=config_data.get("model", "clam_sb"),
     model_size=config_data["params"].get("model_size", "small"),
@@ -32,8 +39,10 @@ clam_config = mil_config(
     no_inst_cluster=config_data["params"].get("no_inst_cluster", False),
     B=config_data["params"].get("B", 8)
 )
+```
 
 # Build the model
+```
 n_in = 1024    # Number of input features (feature size) UNI: 1024
 n_out = 2      # Number of output classes (e.g., binary classification)
 
@@ -47,9 +56,7 @@ if config_data['weights'] != weights_path:
     config_data.update({"weights" : weights_path})
     with open(config_path, 'w') as file:
         json.dump(config_data, file)
-
 #Instantiate UNI model (requires huggingface token)
-
 login(token="your_huggingface_token")
 
 @register_torch
@@ -112,12 +119,14 @@ class uni(TorchFeatureExtractor):
             'class': 'uni',
             'kwargs': {}
         }
-
+```
 # Optionally, provide a feature extractor and normalizer, or let SlideFlow auto-detect them
+```
 extractor = sf.model.build_feature_extractor('uni', tile_px=256) # Assuming you use tile sizes of 256, UNI will resize them to 224.
 normalizer = sf.norm.StainNormalizer(method=config_data["bags_extractor"]["normalizer"]["method"]) # Macenko stain normalization
-
-# Generate predictions for a slide
+```
+# Generate predictions for a single slide
+```
 slide_path = '/path/to/slide.tiff'
 predictions, attention_scores = sf.mil.predict_slide(
     model=model_path,
@@ -140,11 +149,9 @@ with open(output_path, 'w') as f:
     json.dump({"predictions": predictions.tolist(), "attention_scores": attention_scores.tolist()}, f)
 
 print(f"Predictions and attention scores saved to {output_path}")
-
-
-"""
-Multiple slide predictions
-"""
+```
+# Multiple slide predictions
+```
 slide_directory = "path/to/slides"
 #Get list of slides
 slides = os.listdir(slide_directory)
@@ -169,3 +176,5 @@ with open(output_path, 'w') as f:
     for slide, label, prob in zip(slides, labels, probabilities):
         f.write(f"{slide},{label},{prob}\n")
 print(f"Slide predictions saved to {output_path}")
+
+````
